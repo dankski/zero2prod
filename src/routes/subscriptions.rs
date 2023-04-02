@@ -8,6 +8,9 @@ pub struct FormData {
     name: String
 }
 
-pub async fn subscribe(_form: web::Form<FormData>) -> HttpResponse {
+pub async fn subscribe(
+    _form: web::Form<FormData>,
+    // Retrieving a connection from the application state!
+    _connection: web::Data<PgConnection>) -> HttpResponse {
     HttpResponse::Ok().finish()
 }
