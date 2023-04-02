@@ -2,7 +2,8 @@
 
 use std::net::TcpListener;
 
-use zero2prod::startup::run;
+use sqlx::{PgConnection, Connection};
+use zero2prod::{startup::run, configuration::get_configuration};
 
 #[tokio::test]
 async fn health_check_works() {
@@ -24,6 +25,13 @@ async fn health_check_works() {
 async fn subscribe_returns_a_200_for_valid_form_data() {
     
     let app_address = spawn_app();
+    let configuration = get_configuration().expect("Failed to read configuration");
+    let connection_string = configuration.database.connection_string();
+
+    let connection = PgConnection::connect(&connection_string)
+        .await
+        .expect("Failed to connect to Postgres.");
+
     let client = reqwest::Client::new();
 
     let body = "name=le%20guin&email=urusla_le_guine%40gmail.com";
